@@ -10,6 +10,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from mapper.userMapper import register
+from popup.GroupService import cgPanel, jgPanel, egPanel
 
 
 class ContentPanel(wx.SplitterWindow):
@@ -90,7 +91,6 @@ class ContentPanel(wx.SplitterWindow):
             else:
                 self.showMessage("系统消息：发送数据失败！", "")
 
-
 ## -------------- sp --------------------- ##
 
 
@@ -101,7 +101,7 @@ class ClientUI(wx.Frame):
     usr_name = 0
 
     def __init__(self, logic):
-        super().__init__(parent=None, title="py聊天", size=(1000, 640))
+        super().__init__(parent=None, title="lankerens多人聊天室", size=(1000, 640))
 
         self.Center()
         self.logicClient = logic
@@ -132,25 +132,90 @@ class ClientUI(wx.Frame):
         self.contact_list.SetBackgroundColour("#FAFAFA")
         leftbox.Add(self.contact_list, 1, flag=wx.EXPAND | wx.TOP | wx.LEFT | wx.BOTTOM, border=15)
 
+        # 设置右键弹出菜单
+        self.Menu = wx.Menu()
+        self.Menu.Append(11102, "创建群")
+        self.Menu.Append(11103, "加入群")
+        self.Menu.Append(11104, "退出群")
+        self.Menu.AppendSeparator()
+        self.Menu.Append(-1, "设置")
+        self.Menu.Append(-1, "关于我")
+        self.Bind(wx.EVT_CONTEXT_MENU, self.Menu_Test)
+        self.Bind(wx.EVT_MENU, self.Create_Group, id = 11102)
+        self.Bind(wx.EVT_MENU, self.Join_Group, id = 11103)
+        self.Bind(wx.EVT_MENU, self.Exit_Group, id = 11104)
+
+        # 隐藏内页面
+        # 初始化并显示登录页面
         self.init()
+
+    def Create_Group(self, event):
+        cgPanel(usr_name)
+
+    def Join_Group(self, event):
+        jgPanel(usr_name)
+
+    def Exit_Group(self, event):
+        egPanel(usr_name)
+
+    def Menu_Test(self, event):
+        pos = event.GetPosition()
+        # print (pos)
+        pos = self.ScreenToClient(pos)
+        # print (pos)
+        self.PopupMenu(self.Menu, pos)
 
 
     def loginpanel(self):
         window = tk.Tk()
         window.title('lankerens多人聊天室')
+
+        # 窗口居中  =============  start  ====================
         # 窗口尺寸
-        window.geometry('1090x400')
+        # window.geometry('1000x640')
+        sw = window.winfo_screenwidth()
+        # 得到屏幕宽度
+        sh = window.winfo_screenheight()
+        # 得到屏幕高度
+        ww = 1000
+        wh = 640
+        # 窗口宽高为100
+        x = (sw - ww) / 2
+        y = (sh - wh) / 2
+        window.geometry("%dx%d+%d+%d" % (ww, wh, x, y))
+        # 窗口居中  =============  end  ====================
+
 
         # 创建登录框架
-        frame1 = tk.Frame(window, width=1024, height=800)
+        frame1 = tk.Frame(window, width=1000, height=640)
 
-        #  ---------------------------exam-start--------------------
         #  ---------------------------------------------------------
         frame2 = tk.Frame(window, width=1024, height=700)
         frame_top = tk.Frame(frame2, width=1024, height=500)
         frame_top.propagate(0)
         frame_bottom = tk.Frame(frame2, width=1024, height=200)
         frame_bottom.propagate(0)
+
+        #  右键菜单 ======== start =========
+        # menubar = tk.Menu(window)
+        #
+        # # 菜单
+        # menu = tk.Menu(menubar, tearoff=False)
+        # concact = tk.Menu(menubar, tearoff=False)
+        # # for item in ["Python", "C", "C++", "OC", "Swift", "C#", "shell", "Java", "JS", "PHP", "汇编", "NodeJS", "退出"]:
+        # #     menu.add_command(label=item)
+        # menu.add_command(label="target: my python 作业")
+        # menu.add_command(label="author: lankerens")
+        # concact.add_command(label="email: lankerens@foxmail.com")
+        # menubar.add_cascade(label="联系我", menu=concact)
+        # menubar.add_cascade(label="关于我", menu=menu)
+        #
+        # def showMenu(event):
+        #     menubar.post(event.x_root, event.y_root)
+        #
+        # window.bind("<Button-3>", showMenu)
+        #  右键菜单 ======== end =========
+
 
         # welcome image  >> frame1
         canvas = tk.Canvas(frame1, width=500, height=400)  # 创建画布
@@ -215,6 +280,7 @@ class ClientUI(wx.Frame):
             frame1.pack_forget()  # 用于pack布局
             frame2.pack()
 
+
         # 注册成功与否
         def usr_register_sql():
             pynum = (entry_usr_pynum.get()).strip()
@@ -229,7 +295,7 @@ class ClientUI(wx.Frame):
                 frame2.pack_forget()  # 用于pack布局
                 frame1.pack()
 
-            else :
+            else:
                 tk.messagebox.showinfo(title='sorry', message='id或昵称已存在 ')
 
         def usr_register_return():
@@ -260,6 +326,7 @@ class ClientUI(wx.Frame):
 
         # 显示出来
         window.mainloop()
+        #  ---------------------------------------------------------
 
 
     def init(self):
