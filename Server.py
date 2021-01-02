@@ -151,7 +151,6 @@ class Database():
         try:
             self.cursor.execute(sql)
             self.conn.commit()
-
             return True
         except:
             return False
@@ -393,7 +392,9 @@ class Server():
         time.sleep(1)
         if msg['data'] == "login":
             msgs = self.database.getUnreadMessage(id)
+            #  发送未读消息
             self.sendData(12, id, msgs)
+            #  更新未读消息的状态 >>  已读
             self.database.updateUnreadMessage(id)
 
     # 接受sock处理

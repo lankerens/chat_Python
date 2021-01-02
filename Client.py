@@ -525,7 +525,7 @@ class Client():
 
     def startRun(self, ui):
         self.ui = ui
-        _thread.start_new_thread(self.syncServer, ())  # 同步状态线程
+        _thread.start_new_thread(self.syncServer, ())  # 同步状态线程 >> 发送消息, 登录 and 心跳检测
         _thread.start_new_thread(self.receiveThread, ())  # 接受消息线程
 
 
